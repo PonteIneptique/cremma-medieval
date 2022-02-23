@@ -37,7 +37,7 @@ jobs:
           pip install htr-united-metadata-generator htruc anybadge
       - name: Run Report
         run: |
-          humGenerator --group ./**/*./xml --github-envs --to-json updated_metrics.json
+          humGenerator --group ./**/*.xml --github-envs --to-json updated_metrics.json
           cat envs.txt >> $GITHUB_ENV
       - name: Get HTR United Badge Template
         if: github.ref == 'refs/heads/main'
@@ -78,7 +78,7 @@ jobs:
           pip install chocomufin
       - name: Run ChocoMufin
         run: |
-          chocomufin control table.csv ./**/*./xml
+          chocomufin control table.csv ./**/*.xml
   HTRVX:
     runs-on: ubuntu-latest
     steps:
@@ -93,5 +93,5 @@ jobs:
           pip install htrvx
       - name: Run HTRVX
         run: |
-          htrvx --verbose --group --format alto --check-empty --segmonto --xsd --raise-empty ./**/*./xml
+          htrvx --verbose --group --format alto --check-empty --segmonto --xsd --raise-empty ./**/*.xml
 
