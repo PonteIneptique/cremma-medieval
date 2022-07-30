@@ -1,0 +1,33 @@
+name: Upload chocomufin data
+on:
+  release:
+    types: [published]
+jobs:
+  zip-files:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install htr-united-metadata-generator htruc anybadge chocomufin
+      - name: Run Report
+        run: |
+          # Generate chocomufin version
+          chocomufin -n NFD convert table.csv ./*/*.xml --parser alto
+          humGenerator --parse alto --group ./*/*.mufichecker.xml --github-envs --to-json updated_metrics.json --chars -n NFD
+          cat envs.txt >> $GITHUB_ENV
+      - uses: vimtor/action-zip@v1
+        with:
+          files: ./*/*.mufichecker.xml ./*/*.jpg ./*/*.png
+          dest: normalized-data.zip
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "normalized-data.zip"
+          bodyFile: "README.md"
